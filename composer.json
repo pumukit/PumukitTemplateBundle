@@ -1,0 +1,29 @@
+{
+    "name": "teltek/pumukit-template-bundle",
+    "type": "symfony-bundle",
+    "description": "Template bundle for PuMuKIT",
+    "keywords": [
+        "template",
+        "symfony",
+        "bundle",
+        "pumukit",
+        "teltek"
+    ],
+    "homepage": "https://github.com/pumukit/PumukitTemplateBundle",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Teltek Team",
+            "homepage": "http://teltek.es"
+        }
+    ],
+    "require": {
+        "php": ">=7.2",
+        "pumukit/pumukit": ">=3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pumukit\\TemplateBundle\\": ""
+        }
+    }
+}
