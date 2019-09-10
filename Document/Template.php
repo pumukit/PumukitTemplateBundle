@@ -184,7 +184,7 @@ class Template
      * Set text.
      *
      * @param string      $text
-     * @param null|string $locale
+     * @param string|null $locale
      */
     public function setText($text, $locale = null)
     {
@@ -197,7 +197,7 @@ class Template
     /**
      * Get text.
      *
-     * @param null|string $locale
+     * @param string|null $locale
      *
      * @return string
      */
