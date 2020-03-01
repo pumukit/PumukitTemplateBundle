@@ -2,29 +2,39 @@
 
 namespace Pumukit\TemplateBundle\Controller;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Pumukit\TemplateBundle\Document\Template as PumukitTemplate;
 use Pumukit\TemplateBundle\Form\TemplateType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-class CrudController extends Controller
+class CrudController extends AbstractController
 {
+    private $documentManager;
+
+    public function __construct(DocumentManager $documentManager)
+    {
+        $this->documentManager = $documentManager;
+    }
+
     /**
      * @Route("/admin/templates/")
-     * @Template("PumukitTemplateBundle:Crud:index.html.twig")
+     * @Template("@PumukitTemplate/Crud/index.html.twig")
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request): array
     {
-        $repository = $this->get('doctrine_mongodb')->getRepository('PumukitTemplateBundle:Template');
+        $repository = $this->documentManager->getRepository(PumukitTemplate::class);
         $templates = $repository->findAll();
 
         $active = null;
         if ($activeName = $request->get('active')) {
             $actives = array_filter(
                 $templates,
-                function ($t) use ($activeName) {
+                static function ($t) use ($activeName) {
                     return $t->getName() == $activeName;
                 }
             );
@@ -48,9 +58,8 @@ class CrudController extends Controller
             $editForm->handleRequest($request);
 
             if ($editForm->isSubmitted() && $editForm->isValid()) {
-                $dm = $this->get('doctrine_mongodb.odm.document_manager');
-                $dm->persist($active);
-                $dm->flush($active);
+                $this->documentManager->persist($active);
+                $this->documentManager->flush($active);
             }
         }
 
@@ -65,15 +74,13 @@ class CrudController extends Controller
     /**
      * @Route("/admin/templates/create")
      */
-    public function createAction()
+    public function createAction(): RedirectResponse
     {
-        $dm = $this->get('doctrine_mongodb.odm.document_manager');
-
         $t = new PumukitTemplate();
         $t->setName(time());
 
-        $dm->persist($t);
-        $dm->flush();
+        $this->documentManager->persist($t);
+        $this->documentManager->flush();
 
         return $this->redirect($this->generateUrl('pumukit_template_crud_index'));
     }
@@ -81,20 +88,15 @@ class CrudController extends Controller
     /**
      * @Route("/admin/templates/delete/{id}")
      */
-    public function deleteAction(PumukitTemplate $t)
+    public function deleteAction(PumukitTemplate $t): RedirectResponse
     {
-        $dm = $this->get('doctrine_mongodb.odm.document_manager');
-
-        $dm->remove($t);
-        $dm->flush();
+        $this->documentManager->remove($t);
+        $this->documentManager->flush();
 
         return $this->redirect($this->generateUrl('pumukit_template_crud_index'));
     }
 
-    /**
-     * Creates a form to delete a a entity.
-     */
-    private function createDeleteForm(PumukitTemplate $a)
+    private function createDeleteForm(PumukitTemplate $a): FormInterface
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('pumukit_template_crud_delete', ['id' => $a->getId()]))

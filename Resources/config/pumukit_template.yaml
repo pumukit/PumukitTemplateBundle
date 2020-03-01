@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    autowire:      true
+    autoconfigure: true
+    public:        true
+
+  Pumukit\TemplateBundle\EventListener\RouteFoundHttpListener:
+    class: Pumukit\TemplateBundle\EventListener\RouteFoundHttpListener
+    tags:
+      - { name: "kernel.event_listener", event: "kernel.exception", method: "onKernelException" }
+
+  Pumukit\TemplateBundle\Services\MenuService:
+    class: Pumukit\TemplateBundle\Services\MenuService
+    tags:
+      - { name: "pumukitnewadmin.menuitem" }
