@@ -1,4 +1,4 @@
-{% extends 'PumukitNewAdminBundle::layout.html.twig' %}
+{% extends '@PumukitNewAdmin/layout.html.twig' %}
 
 {% block body %}
 
@@ -50,7 +50,7 @@
                             </div>
                         </div>
                         <div class="well">
-                            {% form_theme edit_form 'PumukitNewAdminBundle:Themes:fields.html.twig' %}
+                            {% form_theme edit_form '@@PumukitNewAdmin/Themes/fields.html.twig' %}
                             {{ form_start(edit_form) }}
                             {{ form_widget(edit_form) }}
                             <div class="text-right">

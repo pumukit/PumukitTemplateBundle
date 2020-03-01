@@ -6,8 +6,8 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Pumukit\SchemaBundle\EventListener\LocaleListener;
 use Pumukit\TemplateBundle\Document\Template;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class RouteFoundHttpListener
@@ -29,12 +29,12 @@ class RouteFoundHttpListener
         $this->requestFixer = $requestFixer;
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $repo = $this->dm->getRepository(Template::class);
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
 
-        if ($exception instanceof NotFoundHttpException) {
+        if ($exception instanceof \Exception) {
             $request = $event->getRequest();
             $this->requestFixer->fixRequestLocale($request);
 
@@ -50,7 +50,7 @@ class RouteFoundHttpListener
         }
     }
 
-    private function forward($controller, array $path = [], array $query = [])
+    private function forward($controller, array $path = [], array $query = []): Response
     {
         $path['_controller'] = $controller;
         $subRequest = $this->requestStack->getCurrentRequest()->duplicate($query, null, $path);
