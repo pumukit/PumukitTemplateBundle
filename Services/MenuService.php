@@ -20,4 +20,9 @@ class MenuService implements ItemInterface
     {
         return 'ROLE_ACCESS_TEMPLATES';
     }
+
+    public function getServiceTag(): string
+    {
+        return 'menu';
+    }
 }
