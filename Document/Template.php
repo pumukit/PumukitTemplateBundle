@@ -15,7 +15,7 @@ class Template
     private $id;
 
     /**
-     * @MongoDB\Field(type="boolean")
+     * @MongoDB\Field(type="bool")
      */
     private $hide = false;
 
