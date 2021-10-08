@@ -59,7 +59,7 @@ class CrudController extends AbstractController
 
             if ($editForm->isSubmitted() && $editForm->isValid()) {
                 $this->documentManager->persist($active);
-                $this->documentManager->flush($active);
+                $this->documentManager->flush();
             }
         }
 
